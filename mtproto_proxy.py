@@ -1,10 +1,16 @@
 import asyncio
-import config
-from mtp_proxy import run_proxy
+import socket
+import struct
 
-if __name__ == "__main__":
-    asyncio.run(run_proxy(
-        port=config.PORT,
-        users=config.users,
-        ad_tag=config.AD_TAG
-    ))
+PORT = 443
+
+async def handle_client(reader, writer):
+    writer.close()
+
+async def main():
+    server = await asyncio.start_server(
+        handle_client, '0.0.0.0', PORT)
+    async with server:
+        await server.serve_forever()
+
+asyncio.run(main())
